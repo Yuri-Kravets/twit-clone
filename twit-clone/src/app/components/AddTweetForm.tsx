@@ -71,14 +71,14 @@ export default function AddTweetForm({onAdd} : AddTweetFormProps) {
 
         return (
             <form onSubmit={handleSubmit}
-                  className="mb-6 flex flex-col gap-4 bg-white dark:bg-gray-900 p-4 rounded shadow-sm">
+                  className="mb-6 flex flex-col gap-4  p-4 rounded shadow-sm">
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Add New Tweet</h2>
                 <input
                     type="text"
                     placeholder="Title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="border px-3 py-2 rounded w-full text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                    className="border px-3 py-2 rounded w-full text-sm "
                     required
                 />
                 {/*<input*/}
@@ -93,19 +93,19 @@ export default function AddTweetForm({onAdd} : AddTweetFormProps) {
                     placeholder="Body"
                     value={body}
                     onChange={(e) => setBody(e.target.value)}
-                    className="w-full border p-2 rounded text-sm resize-none dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                    className="w-full border p-2 rounded text-sm resize-none "
                     rows={3}
                     required
                 />
                 <div className="mb-2">
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Choose Tags:</p>
+                    <p className="text-sm font-medium text-gray-800  mb-2">Choose Tags:</p>
                     <div className="flex flex-wrap gap-2 mb-2">
                         {predefinedTags.map((tag) => (
                             <button
                                 type="button"
                                 key={tag}
                                 onClick={() => handleTagSelect(tag)}
-                                className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 text-sm text-gray-800 dark:text-white">{tag}
+                                className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 ">{tag}
                             </button>
                         ))}
                     </div>
@@ -114,12 +114,12 @@ export default function AddTweetForm({onAdd} : AddTweetFormProps) {
                             {selectedTags.map((tag) => (
                                 <span
                                     key={tag}
-                                    className="flex items-center gap-1 bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded text-blue-700 dark:text-blue-200"
+                                    className="flex items-center gap-1 bg-blue-100  px-2 py-1 rounded "
                                 >{tag}
                                     <button
                                         type="button"
                                         onClick={() => handleTagRemove(tag)}
-                                        className="text-red-500 dark:text-red-300 font-bold ml-1"
+                                        className="text-red-500  font-bold ml-1"
                                     >×</button></span>))}</div>)}</div>
                 <div className="flex gap-2 items-center">
                     <input
@@ -127,12 +127,12 @@ export default function AddTweetForm({onAdd} : AddTweetFormProps) {
                         placeholder="Custom tag"
                         value={customTag}
                         onChange={(e) => setCustomTag(e.target.value)}
-                        className="border px-3 py-2 rounded w-full sm:w-auto text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                        className="border px-3 py-2 rounded w-full sm:w-auto text-sm "
                     />
                     <button
                         type="button"
                         onClick={handleCustomTag}
-                        className="bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-600 text-sm"
+                        className="bg-gray-300  px-4 py-2 rounded hover:bg-gray-400  text-sm"
                     >
                         Add Tag
                     </button>

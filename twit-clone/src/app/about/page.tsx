@@ -20,7 +20,7 @@ const handleSubmit = async () => {
 }
 
     return (
-        <main className="p-6">
+        <main className="p-6 bg-white text-black dark:bg-gray-900 dark:text-white ">
             <h1 className="text-2xl font-bold mb-4">About Page</h1>
             <p>This is a simple Twitter clone built with Next.js.</p>
             <input

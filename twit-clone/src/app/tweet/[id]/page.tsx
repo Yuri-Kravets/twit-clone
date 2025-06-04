@@ -77,7 +77,7 @@ export default function TweetPage({ params }: { params: Promise<{ id: string }>}
     }
 
     return (
-        <main className="border p-4 rounded hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all">
+        <main className="border p-4 rounded hover:bg-gray-50  cursor-pointer transition-all">
             <h1 className="font-semibold text-lg sm:text-xl">{tweet.title}</h1>
             <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base mt-1">{tweet.body}</p>
             <div className="text-sm text-gray-500 dark:text-gray-400 mt-2 flex flex-wrap gap-2 items-center">

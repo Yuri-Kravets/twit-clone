@@ -74,7 +74,7 @@ export default function Home() {
     if (loading) return <p className="p-4">Loading tweets...</p>;
 
     return (
-        <main className="p-4 max-w-2xl mx-auto">
+        <main className="p-4 max-w-2xl mx-auto bg-white text-black dark:bg-gray-900 dark:text-white">
             <h1 className="text-xl sm:text-2xl font-bold mb-6">Home page</h1>
             <AddTweetForm onAdd={handleAddTweet}/>
             <div className="space-y-4">
@@ -104,11 +104,11 @@ export default function Home() {
                                 <p className="text-xs text-blue-400 mt-1 break-words">
                                     Tags: {tweet.tags.join(", ")}
                                 </p>
-                                </div>
                             </div>
+                        </div>
                     </Link>
-                    ))}
+                ))}
             </div>
         </main>
-);
+    );
 }
