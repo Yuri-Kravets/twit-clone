@@ -4,10 +4,11 @@
 import {use, useEffect, useState} from "react";
 
 interface Tweet {
-    id: number;
+    id?: number | string;
+    _id?: string;
     title: string;
     body: string;
-    userId: number;
+    userId?: number;
     tags: string[];
     reactions: {
         likes: number;
@@ -23,26 +24,60 @@ export default function TweetPage({ params }: { params: Promise<{ id: string }>}
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`https://dummyjson.com/posts/${id}`)
-            .then((res) => res.json())
-            .then((data) => {
-                const tweetData = {
-                    ...data,
-                    reactions: {
-                        likes:
-                            typeof data.reactions === "number"
-                                ? data.reactions
-                                : data.reactions.likes,
-                        dislikes:
-                            typeof data.reactions === "number" ? 0 : data.reactions.dislikes,
-                    },
-                };
-                setTweet(tweetData);
-                setLoading(false);
-            });
-    }, [id]);
+        const fetchTweet = async () => {
+            try {
+                setLoading(true)
 
-    const handleLike = () => {
+                // Пробуем получить из MongoDB
+                const dbRes = await fetch(`/api/tweets/${id}`)
+                if (dbRes.ok) {
+                    const dbTweet = await dbRes.json()
+                    setTweet({
+                        ...dbTweet,
+                        id: dbTweet._id,
+                    })
+                } else {
+                    // Если не найден — пробуем получить с внешнего API
+                    const serverRes = await fetch(`https://dummyjson.com/posts/${id}`)
+                    const data = await serverRes.json()
+                    setTweet({
+                        ...data,
+                        reactions: {
+                            likes: typeof data.reactions === 'number' ? data.reactions : data.reactions?.likes ?? 0,
+                            dislikes: typeof data.reactions === 'number' ? 0 : data.reactions?.dislikes ?? 0,
+                        },
+                    })
+                }
+            } catch (e) {
+                console.error('Ошибка загрузки твита:', e)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchTweet()
+    }, [id])
+    // useEffect(() => {
+    //     fetch(`https://dummyjson.com/posts/${id}`)
+    //         .then((res) => res.json())
+    //         .then((data) => {
+    //             const tweetData = {
+    //                 ...data,
+    //                 reactions: {
+    //                     likes:
+    //                         typeof data.reactions === "number"
+    //                             ? data.reactions
+    //                             : data.reactions.likes,
+    //                     dislikes:
+    //                         typeof data.reactions === "number" ? 0 : data.reactions.dislikes,
+    //                 },
+    //             };
+    //             setTweet(tweetData);
+    //             setLoading(false);
+    //         });
+    // }, [id]);
+
+    const handleLike = async () => {
         if (!tweet) return;
         setTweet({
             ...tweet,
@@ -51,9 +86,28 @@ export default function TweetPage({ params }: { params: Promise<{ id: string }>}
                 likes: tweet.reactions.likes + 1,
             },
         });
+        // Отправляем PATCH-запрос на сервер
+        if (tweet._id) {
+            const res = await fetch(`/api/tweets/${tweet._id}/like`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'like' }),
+            });
+
+            if (!res.ok) {
+                console.error('Ошибка при обновлении лайка на сервере');
+                // по желанию: откатить UI, если важно
+            }
+        // if (tweet._id) {
+        //     await fetch(`/api/tweets/${tweet._id}/like`, {
+        //         method: 'PATCH',
+        //         headers: {'Content-Type': 'application/json'},
+        //         body: JSON.stringify({type: 'like'}),
+        //     });
+        // }
     };
 
-    const handleDislike = () => {
+    const handleDislike = async () => {
         if (!tweet) return;
         setTweet({
             ...tweet,
@@ -62,6 +116,24 @@ export default function TweetPage({ params }: { params: Promise<{ id: string }>}
                 dislikes: tweet.reactions.dislikes + 1,
             },
         });
+        if (tweet._id) {
+            const res = await fetch(`/api/tweets/${tweet._id}/like`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'dislike' }),
+            });
+
+            if (!res.ok) {
+                console.error('Ошибка при обновлении дизлайка на сервере');
+            }
+        }
+        // if (tweet._id) {
+        //     await fetch(`/api/tweets/${tweet._id}/like`, {
+        //         method: 'PATCH',
+        //         headers: {'Content-Type': 'application/json'},
+        //         body: JSON.stringify({type: 'dislike'}),
+        //     });
+        // }
     };
 
     if (loading) {
