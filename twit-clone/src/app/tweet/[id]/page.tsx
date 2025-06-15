@@ -102,6 +102,7 @@ export default function TweetPage() {
         });
 
         try {
+            //const res = await fetch(`/api/tweets/${tweet._id}/reactions`, {
             const res = await fetch(`/api/tweets/${tweet._id}/reactions`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
