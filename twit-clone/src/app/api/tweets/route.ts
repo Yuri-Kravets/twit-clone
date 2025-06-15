@@ -2,23 +2,19 @@ import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import { Tweet } from "@/models/tweet";
 import { connectToDB } from "@/lib/mongodb";
-import { v4 as uuidv4 } from 'uuid'
+
 
 export async function POST(req: Request) {
     try {
         console.log("🟢 Начинаем подключение к базе данных...");
-        await connectToDB(); // подключение к MongoDB
+        await connectToDB();
         console.log("✅ Подключение к базе прошло успешно");
+
         const body = await req.json();
         console.log("Incoming tweet data:", body);
 
-        const tweetWithUUID = {
-            ...body,
-            id: uuidv4(),
-        }
-
         console.log("⏳ Пытаемся создать твит в базе...");
-        const tweet = await Tweet.create(tweetWithUUID);
+        const tweet = await Tweet.create(body);
         console.log("Saved tweet:", tweet);
 
         return NextResponse.json({ message: "Tweet saved", tweet }, { status: 201 });
@@ -30,21 +26,92 @@ export async function POST(req: Request) {
         }
 
         return NextResponse.json(
-            { message: "Failed to save tweet", error: error instanceof Error ? error.message : error },
+            {
+                message: "Failed to save tweet",
+                error: error instanceof Error ? error.message : String(error),
+            },
             { status: 500 }
         );
     }
 }
-
 export async function GET(req: Request) {
     try {
         await connectToDB();
-        const tweets = await Tweet.find().sort({createdAt: -1});
-        return NextResponse.json(tweets, { status: 200 })
+
+        const tweets = await Tweet.find().sort({ createdAt: -1 });
+
+        const normalizedTweets = tweets.map(tweet => ({
+            ...tweet.toObject(),
+            id: tweet._id.toString(),
+            _id: undefined,
+        }));
+
+        return NextResponse.json(normalizedTweets, { status: 200 });
     } catch (error) {
-        return NextResponse.json({message: 'Failed to fetch tweets'}, {status: 500})
+        console.error("❌ Failed to fetch tweets:", error);
+        return NextResponse.json({ message: "Failed to fetch tweets" }, { status: 500 });
     }
 }
+// export async function GET(req: Request) {
+//     try {
+//         await connectToDB();
+//
+//         const tweets = await Tweet.find().sort({ createdAt: -1 });
+//         return NextResponse.json(tweets, { status: 200 });
+//     } catch (error) {
+//         console.error("❌ Failed to fetch tweets:", error);
+//         return NextResponse.json({ message: "Failed to fetch tweets" }, { status: 500 });
+//     }
+//}
+
+
+//
+// import { NextResponse } from "next/server";
+// import mongoose from "mongoose";
+// import { Tweet } from "@/models/tweet";
+// import { connectToDB } from "@/lib/mongodb";
+//
+//
+// export async function POST(req: Request) {
+//     try {
+//         console.log("🟢 Начинаем подключение к базе данных...");
+//         await connectToDB(); // подключение к MongoDB
+//         console.log("✅ Подключение к базе прошло успешно");
+//
+//         const body = await req.json();
+//         console.log("Incoming tweet data:", body);
+//
+//
+//
+//         console.log("⏳ Пытаемся создать твит в базе...");
+//         const tweet = await Tweet.create(body);
+//         console.log("Saved tweet:", tweet);
+//
+//         return NextResponse.json({ message: "Tweet saved", tweet }, { status: 201 });
+//     } catch (error) {
+//         console.error("❌ Failed to save tweet:", error);
+//
+//         if (error instanceof mongoose.Error.ValidationError) {
+//             console.error("📛 Validation error details:", error.errors);
+//         }
+//
+//         return NextResponse.json(
+//             { message: "Failed to save tweet", error: error instanceof Error ? error.message : error },
+//             { status: 500 }
+//         );
+//     }
+// }
+//
+// export async function GET(req: Request) {
+//     try {
+//         await connectToDB();
+//
+//         const tweets = await Tweet.find().sort({createdAt: -1});
+//         return NextResponse.json(tweets, { status: 200 })
+//     } catch (error) {
+//         return NextResponse.json({message: 'Failed to fetch tweets'}, {status: 500})
+//     }
+// }
 
 
 // import {NextResponse} from "next/server";

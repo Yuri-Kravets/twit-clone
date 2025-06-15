@@ -21,7 +21,7 @@ export default function TrendingTopics({tags} : TrendingTopicsProps) {
             <div className="space-y-3">
                 {sortedTags.map(([tag, count]) => (
                     <div
-                        key={tag}
+                        key={tag + count}
                         className="bg-gray-100 dark:bg-gray-800 p-3 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer"
                     >
                         <p className="text-sm font-medium text-blue-600 dark:text-blue-400">#{tag}</p>
